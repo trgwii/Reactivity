@@ -3,27 +3,66 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Document</title>
+		<style>
+			.done {
+				text-decoration: line-through;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="app"></div>
 		<script type="module">
-			import { q, el, text, inputState, children, State } from '/lib.js';
+			import DOM from '/DOM.js';
+			import State from './State.js';
 			
-			const app = q('#app');
-			const input = el('input');
-			const output = el('p');
+			const app = DOM.q('#app');
+			const input = DOM.el('input');
+			const output = DOM.el('p');
 			app.appendChild(input);
 			app.appendChild(output);
 			
-			text(output, inputState(input));
+			DOM.text(output, DOM.input(input));
 			
-			const todoEl = el('ol');
+			const todoEl = DOM.el('ol');
 			app.appendChild(todoEl);
 			
+			
+			
+			const addTodo = DOM.text(DOM.el('button'), 'Add todo');
+			app.appendChild(addTodo);
+
 			const todos = State([]);
 			window.todos = todos;
-			
-			children(todoEl, todos.map(x => x.map(s => text(el('li'), s))));
+
+			DOM.click(addTodo).subscribe(() =>
+				// Should really be:
+				// todos.push({ body: String(Math.random()), done: false })
+				// need list support for that
+				todos.merge(
+					String(Math.random()),
+					(list, val) => [ ...list, { body: val, done: false } ]));
+
+			const todoLis = todos
+				.map(x =>
+					x.map((s, i) => {
+						const li = DOM.el('li');
+						if (s.done) {
+							li.classList.add('done');
+						}
+						DOM.click(li).subscribe(() =>
+							// another ugly merge here :(
+							todos.merge(
+								li.classList.contains('done'),
+								(list, done) =>
+									[
+										...list.slice(0, i),
+										{ ...list[i], done: !list[i].done },
+										...list.slice(i + 1)
+									]
+							));
+						return DOM.text(li, s.body);
+					}));
+			DOM.children(todoEl, todoLis);
 		</script>
 	</body>
 </html>
