@@ -2,8 +2,20 @@ export const q = x => document.querySelector(x);
 export const el = x => document.createElement(x);
 
 export const text = (el, s) =>
+	((typeof s === 'string'
+		? el.textContent = s
+		: s.subscribe(x =>
+			el.textContent = x)), el);
+
+export const children = (el, s) => {
+	let cache = [];
 	s.subscribe(x =>
-		el.textContent = x);
+		x.forEach((x, i) =>
+			(x === cache[i]  || el.children[i]
+				? el.replaceChild(x, el.children[i])
+				: el.appendChild(x),
+			cache[i] = x)));
+};
 
 export const State = value => {
 	const subscribers = [];

@@ -7,7 +7,7 @@
 	<body>
 		<div id="app"></div>
 		<script type="module">
-			import { q, el, text, inputState, State } from '/lib.js';
+			import { q, el, text, inputState, children, State } from '/lib.js';
 			
 			const app = q('#app');
 			const input = el('input');
@@ -16,6 +16,14 @@
 			app.appendChild(output);
 			
 			text(output, inputState(input));
+			
+			const todoEl = el('ol');
+			app.appendChild(todoEl);
+			
+			const todos = State([]);
+			window.todos = todos;
+			
+			children(todoEl, todos.map(x => x.map(s => text(el('li'), s))));
 		</script>
 	</body>
 </html>
