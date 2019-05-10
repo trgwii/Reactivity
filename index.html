@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+	</head>
+	<body>
+		<div id="app"></div>
+		<script type="module">
+			import { q, el, text, inputState, State } from '/lib.js';
+			
+			const app = q('#app');
+			const input = el('input');
+			const output = el('p');
+			app.appendChild(input);
+			app.appendChild(output);
+			
+			text(output, inputState(input));
+		</script>
+	</body>
+</html>
